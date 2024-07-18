@@ -1,0 +1,24 @@
+namespace: poker-app
+replicaCount: 3
+image:
+  repository: poker-session-logger
+  tag: latest
+  pullPolicy: Never
+
+service:
+  type: LoadBalancer
+  port: 80
+
+configMap:
+  DATABASE_URL: "sqlite:///./poker_sessions.db"
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+secret:
+  DATABASE_PASSWORD: "pass"
