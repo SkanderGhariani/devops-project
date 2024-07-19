@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from main import app, Base, engine  # Ensure the path to the main file is correct
+from main import app, Base, engine
 from sqlalchemy.orm import sessionmaker
 from datetime import date
 
@@ -10,6 +10,11 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def setup_module(module):
     # Drop all tables and recreate them before each test module
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
+
+def setup_function(function):
+    # Drop all tables and recreate them before each test function
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
 
