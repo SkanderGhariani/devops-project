@@ -1,8 +1,17 @@
 from fastapi.testclient import TestClient
-from main import app  # Ensure the path to the main file is correct
+from main import app, Base, engine  # Ensure the path to the main file is correct
+from sqlalchemy.orm import sessionmaker
 from datetime import date
 
 client = TestClient(app)
+
+# Create a new session to interact with the database
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+def setup_module(module):
+    # Drop all tables and recreate them before each test module
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
 
 def test_create_user():
     response = client.post("/users/", json={"username": "testuser"})
