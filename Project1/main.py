@@ -5,6 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, Session
 from datetime import date
 from typing import List, Optional
+from prometheus_fastapi_instrumentator import Instrumentator
 
 # Database setup
 DATABASE_URL = "sqlite:///./poker_sessions.db"
@@ -72,6 +73,7 @@ class SessionResponse(BaseModel):
 
 # FastAPI app
 app = FastAPI()
+Instrumentator().instrument(app).expose(app)
 
 # Dependency to get a database session
 def get_db():

@@ -5,3 +5,4 @@ pytest-asyncio==0.14.0
 fastapi==0.68.1
 pydantic==1.8.2
 requests
+prometheus_fastapi_instrumentator

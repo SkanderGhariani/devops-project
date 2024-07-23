@@ -8,6 +8,7 @@ image:
 service:
   type: LoadBalancer
   port: 80
+  
 
 configMap:
   DATABASE_URL: "sqlite:///./poker_sessions.db"

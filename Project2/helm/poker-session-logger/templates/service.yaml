@@ -13,5 +13,7 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
+      targetPort: 8000  # Explicitly map to container port
+
   selector:
     app: poker-session
