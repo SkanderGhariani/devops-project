@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-alert-rules
+  namespace: poker-app
+data:
+  alerting_rules.yaml: |
+    groups:
+      - name: example
+        rules:
+        - alert: HighErrorRate
+          expr: rate(http_requests_total{status=~"4..|5.."}[1m]) > 0.05
+          for: 1m
+          labels:
+            severity: page
+          annotations:
+            summary: "High error rate detected"
+            description: "High error rate detected for the past 1 minutes."

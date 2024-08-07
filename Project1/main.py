@@ -6,12 +6,16 @@ from sqlalchemy.orm import sessionmaker, relationship, Session
 from datetime import date
 from typing import List, Optional
 from prometheus_fastapi_instrumentator import Instrumentator
+from prometheus_client import Counter, Gauge
 
 # Database setup
 DATABASE_URL = "sqlite:///./poker_sessions.db"
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
+# Custom metrics
+user_count = Gauge('user_count', 'Total number of users')
+session_count = Gauge('session_count', 'Total number of poker sessions')
 
 # SQLAlchemy models
 class User(Base):
@@ -83,22 +87,22 @@ def get_db():
     finally:
         db.close()
 
-# Create a new user
 @app.post("/users/", response_model=UserResponse)
 async def create_user(user: UserCreate, db: Session = Depends(get_db)):
     db_user = User(username=user.username)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
+    user_count.inc()  # Increment user count
     return db_user
 
-# Create a new session
 @app.post("/sessions/", response_model=SessionResponse)
 async def create_session(session: SessionCreate, db: Session = Depends(get_db)):
     db_session = PokerSession(**session.dict())
     db.add(db_session)
     db.commit()
     db.refresh(db_session)
+    session_count.inc()  # Increment session count
     return db_session
 
 # Read all sessions for a user with optional date range filter
